@@ -1,0 +1,64 @@
+function Decoder(bytes, port) {
+  // TODO: Transform bytes to decoded payload below
+  var decoded = {};
+
+    for (var i = 0; i < bytes.length; ) {
+        var channel_id = bytes[i++];
+        var channel_type = bytes[i++];
+        // BATTERY
+        if (channel_id === 0x01 && channel_type === 0x75) {
+            decoded.battery = bytes[i];
+            i += 1;
+        }
+        // DOOR / WINDOW STATE
+        else if (channel_id === 0x03 && channel_type === 0x00) {
+            decoded.state = bytes[i] === 0 ? "close" : "open";
+            i += 1;
+        }
+        //
+        else if (channel_id === 0x04 && channel_type === 0x00) {
+            decoded.install = bytes[i] === 0 ? "yes" : "no";
+            i += 1;
+        } else {
+            break;
+        }
+    }
+   
+   
+   
+  var decodedPayload = {
+  
+    
+    "battery": decoded.battery,
+    "magnet-status": decoded.state,
+    "tamper-status": decoded.install
+    
+    
+    
+  };
+  // END TODO
+
+  return Serialize(decodedPayload)
+}
+
+// Generated: do not touch unless your Google Form fields have changed
+var field_mapping = {
+  "battery": "entry.1897005263",
+  "magnet-status": "entry.268201985",
+  "tamper-status": "entry.2034943687"
+};
+// End Generated
+
+function Serialize(payload) {
+  var str = [];
+  for (var key in payload) {
+    if (payload.hasOwnProperty(key)) {
+      var name = encodeURIComponent(field_mapping[key]);
+      var value = encodeURIComponent(payload[key]);
+      str.push(name + "=" + value);
+    }
+  }
+  return str.join("&");
+}
+// DO NOT REMOVE: Google Form Function
+  
